@@ -1,9 +1,0 @@
-{
-  // Cloudflare Workers 静态站点配置：部署 Astro 构建产物 dist/
-  "name": "personalportfoliowebsite",
-  "compatibility_date": "2025-01-01",
-  "assets": {
-    "directory": "./dist",
-    "not_found_handling": "404-page"
-  }
-}

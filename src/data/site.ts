@@ -1,10 +1,10 @@
 import type { SiteConfig } from '../types';
 
-const defaultSiteUrl = 'https://personalportfoliowebsite.3220600989.workers.dev';
+const defaultSiteUrl = 'https://luotaotao-portfolio.pages.dev';
 
 /**
  * 站点级配置：标题、域名、导航、社交链接与统计脚本集中在此维护。
- * 上线时把 PUBLIC_SITE_URL 设为 Cloudflare 实际分配的 workers.dev 地址；
+ * 上线时把 PUBLIC_SITE_URL 设为 Cloudflare 实际分配的 *.pages.dev 地址；
  * 把 Umami Cloud 的 Website ID 写入 PUBLIC_UMAMI_WEBSITE_ID 即可启用统计。
  */
 export const site: SiteConfig = {

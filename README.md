@@ -18,7 +18,7 @@ npm run preview    # 预览构建产物
 
 | 项目 | 状态 |
 |---|---|
-| 部署 | Cloudflare Workers（静态资源），使用免费 `*.workers.dev` 域名 |
+| 部署 | Cloudflare Pages，使用免费 `*.pages.dev` 域名 |
 | 统计 | Umami Cloud（Hobby 免费档）；填入 Website ID 后才加载脚本 |
 | 项目数据 | 暂无公开项目，首页显示“项目整理中”；`/projects/[slug]` 详情页路由保留 |
 | 筛选标签 | 按你的决定暂不实现 |
@@ -67,24 +67,26 @@ npm run preview    # 预览构建产物
 4. **图片素材**：替换 `src/assets/avatar.webp`、`public/og-image.png`；项目截图按上面的方式走 Astro `<Image>` 优化。
 5. **设计 token**：`src/styles/global.css` 的 `@theme` —— 颜色/圆角/字体先加 token，再在组件里用对应 Tailwind 类，禁止写死十六进制。
 
-## 部署到 Cloudflare Workers（静态站点）
+## 部署到 Cloudflare Pages
 
-本项目通过 Workers 静态资源方式部署：`wrangler.jsonc` 中 `assets.directory = "./dist"`，构建产物由 wrangler 上传。
+1. 仓库已推送到 GitHub，无需重复初始化。
 
-1. Cloudflare 面板 → **Workers 和 Pages** → **创建** → **Continue with GitHub** → 选中仓库 `3220600989/Personalportfoliowebsite`。
-2. 配置：项目名 `personalportfoliowebsite`；构建命令 `npm run build`；部署命令 `npx wrangler deploy`；路径 `/`；API 令牌用面板自动生成的 build token。环境变量先留空，点 **部署**。
-3. Cloudflare 分配免费域名 `<项目名>.<账号>.workers.dev`（本项目为 `https://personalportfoliowebsite.3220600989.workers.dev`）。
-4. 如需 canonical / OG / sitemap 指向正式域名：
-   - 项目 **设置 → 变量和机密** 添加 `PUBLIC_SITE_URL=https://实际域名`（生产环境）；
-   - 同步把 `public/robots.txt` 的 `Sitemap:` 地址改成同一域名（静态文件读不到环境变量）；
-   - 提交推送后 Cloudflare 自动重新构建。
+2. Cloudflare Dashboard → **Workers & Pages** → **Create** → **Pages** → **Connect to Git** → 选择 GitHub 并授权 → 选中仓库 `Personalportfoliowebsite`。
+
+3. 构建配置：Framework preset 选 **Astro**，Build command `npm run build`，Build output directory `dist`。环境变量先留空，点 **Save and Deploy**。
+
+4. Cloudflare 会免费分配一个 `<项目名>.pages.dev` 域名，实际地址**可能带随机后缀**，请在项目 **Deployments** 页复制生产域名。然后：
+   - 项目 **Settings → Environment variables** 添加 `PUBLIC_SITE_URL=https://实际域名`（Production 必填），用于生成正确的 canonical / OG / sitemap；
+   - 同步把 `public/robots.txt` 里的 `Sitemap:` 地址改成同一个域名（它是静态文件，读不到环境变量）；
+   - 提交推送后 Cloudflare 会自动重新构建。
+
 5. 重新部署后验证：`/sitemap-index.xml`、页面 canonical、OG 分享预览、`/404` 页面都指向新域名。
 
 ## 接入 Umami 统计
 
 1. 注册 [Umami Cloud](https://cloud.umami.is/)，Hobby 档免费（每月 10 万事件、1 个网站、6 个月数据保留）。
-2. 添加网站，域名填 Cloudflare 实际分配的 `*.workers.dev` 地址；进入网站设置复制 **Website ID**。
-3. 在 Cloudflare 项目 **设置 → 变量和机密** 添加 `PUBLIC_UMAMI_WEBSITE_ID=<Website ID>`（本地则写入 `.env.local`），重新部署。
+2. 添加网站，域名填 Cloudflare 实际分配的 `*.pages.dev` 地址；进入网站设置复制 **Website ID**。
+3. 在 Cloudflare 项目 **Settings → Environment variables** 添加 `PUBLIC_UMAMI_WEBSITE_ID=<Website ID>`（本地则写入 `.env.local`），重新部署。
 4. `websiteId` 为空时统计脚本完全不输出；填入后以 `defer` 方式加载，不阻塞首屏。
 5. 已埋的事件：`copy-email`、`email-link`、`social-*`、`projects-contact`；站点使用哈希锚点，脚本已设置 `data-exclude-hash`，不会把 `#about` 等计入路径。
 
