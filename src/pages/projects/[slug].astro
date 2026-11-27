@@ -1,0 +1,108 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { site } from '../../data/site';
+import { profile } from '../../data/profile';
+import { projects } from '../../data/projects';
+import type { Project } from '../../types';
+
+export function getStaticPaths() {
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? site.siteUrl).href;
+---
+
+<BaseLayout
+  title={`${project.name} | ${profile.name}`}
+  description={project.description}
+  canonical={canonical}
+  analytics={site.analytics}
+>
+  <Header navItems={site.navItems} brand={profile.name} />
+  <main id="main-content" class="mx-auto max-w-5xl px-4 py-20 sm:px-6 md:py-28 lg:px-8">
+    <a href="/#projects" class="text-accent hover:underline">← 返回项目列表</a>
+
+    <h1 class="mt-6 text-[clamp(2rem,5vw,3.2rem)] font-bold">{project.name}</h1>
+    <p class="mt-4 max-w-3xl text-lg text-muted">{project.description}</p>
+
+    <div class="mt-10 overflow-hidden rounded-card border border-border bg-card">
+      <Image
+        src={project.image}
+        alt={project.imageAlt ?? project.name}
+        widths={[800, 1200, 1600]}
+        sizes="(max-width: 1024px) 100vw, 1024px"
+        loading="eager"
+        class="aspect-video w-full object-cover"
+      />
+    </div>
+
+    <div class="mt-10 grid gap-10 md:grid-cols-[1fr_280px]">
+      <div class="space-y-6">
+        {
+          project.highlights && project.highlights.length > 0 && (
+            <section>
+              <h2 class="mb-3 text-xl font-semibold">项目亮点</h2>
+              <ul class="list-inside list-disc space-y-2 text-muted">
+                {project.highlights.map((highlight) => (
+                  <li>{highlight}</li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+        <section>
+          <h2 class="mb-3 text-xl font-semibold">技术栈</h2>
+          <div class="flex flex-wrap gap-2">
+            {project.techStack.map((tech) => <span class="chip">{tech}</span>)}
+          </div>
+        </section>
+      </div>
+
+      <aside class="space-y-4 rounded-card border border-border bg-card p-6 text-sm">
+        {project.role && <p><span class="text-muted">角色：</span>{project.role}</p>}
+        {project.period && <p><span class="text-muted">时间：</span>{project.period}</p>}
+        <div class="flex flex-col gap-3 pt-2">
+          {
+            project.liveUrl && (
+              <a
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-primary"
+              >
+                在线预览 ↗
+              </a>
+            )
+          }
+          {
+            project.repoUrl && (
+              <a
+                href={project.repoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-outline"
+              >
+                源码 ↗
+              </a>
+            )
+          }
+          {!project.liveUrl && !project.repoUrl && (
+            <span class="text-muted">暂无公开链接</span>
+          )}
+        </div>
+      </aside>
+    </div>
+  </main>
+  <Footer brand={profile.name} />
+</BaseLayout>

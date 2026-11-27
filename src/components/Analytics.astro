@@ -1,0 +1,22 @@
+---
+import type { AnalyticsConfig } from '../types';
+
+interface Props {
+  analytics: AnalyticsConfig;
+}
+
+const { analytics } = Astro.props;
+const enabled = analytics.websiteId.trim().length > 0;
+---
+
+{
+  enabled && (
+    <script
+      is:inline
+      defer
+      src={analytics.scriptUrl}
+      data-website-id={analytics.websiteId}
+      data-exclude-hash="true"
+    ></script>
+  )
+}

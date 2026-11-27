@@ -1,0 +1,22 @@
+---
+import type { SkillGroup as SkillGroupData } from '../types';
+
+interface Props {
+  group: SkillGroupData;
+}
+
+const { group } = Astro.props;
+---
+
+<div data-reveal class="rounded-card border border-border bg-card p-6">
+  <h3 class="mb-4 text-lg font-semibold">{group.category}</h3>
+  <div class="flex flex-wrap gap-2">
+    {
+      group.skills.map((skill) => (
+        <span class="chip" tabindex="0">
+          {skill.name}{skill.level ? ` · ${skill.level}` : ''}
+        </span>
+      ))
+    }
+  </div>
+</div>

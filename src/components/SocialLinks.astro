@@ -1,0 +1,29 @@
+---
+import type { SocialLink } from '../types';
+
+interface Props {
+  links: SocialLink[];
+  className?: string;
+}
+
+const { links, className = '' } = Astro.props;
+---
+
+{
+  links.length > 0 && (
+    <div class:list={['flex flex-wrap gap-3', className]}>
+      {links.map((link) => (
+        <a
+          href={link.href}
+          target={link.external ? '_blank' : undefined}
+          rel={link.external ? 'noopener noreferrer' : undefined}
+          data-umami-event={`social-${link.icon}`}
+          class="chip min-h-[44px] items-center px-4"
+        >
+          {link.label}
+          {link.external && <span aria-hidden="true"> ↗</span>}
+        </a>
+      ))}
+    </div>
+  )
+}

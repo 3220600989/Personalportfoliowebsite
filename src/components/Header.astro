@@ -1,0 +1,113 @@
+---
+import type { NavItem } from '../types';
+
+interface Props {
+  navItems: NavItem[];
+  brand: string;
+}
+
+const { navItems, brand } = Astro.props;
+---
+
+<header
+  id="site-header"
+  class="sticky top-0 z-50 border-b border-border bg-bg/85 backdrop-blur-md"
+>
+  <div class="mx-auto flex min-h-[68px] max-w-5xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+    <a href="/#home" class="text-lg font-bold tracking-tight">
+      {brand}<span class="text-accent">.</span>
+    </a>
+
+    <button
+      id="nav-toggle"
+      type="button"
+      class="flex min-h-[44px] min-w-[44px] flex-col items-center justify-center gap-[5px] md:hidden"
+      aria-label="打开菜单"
+      aria-expanded="false"
+      aria-controls="site-nav"
+    >
+      <span class="block h-0.5 w-6 bg-text"></span>
+      <span class="block h-0.5 w-6 bg-text"></span>
+      <span class="block h-0.5 w-6 bg-text"></span>
+    </button>
+
+    <nav
+      id="site-nav"
+      aria-label="主导航"
+      data-open="false"
+      class="absolute top-full right-0 left-0 hidden flex-col border-b border-border bg-bg px-4 py-3 sm:px-6 md:static md:flex md:flex-row md:items-center md:gap-7 md:border-0 md:bg-transparent md:p-0"
+    >
+      {
+        navItems.map((item) => (
+          <a
+            href={item.href}
+            data-nav-link
+            class="py-3 text-sm text-muted transition-colors hover:text-text md:py-0"
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('#site-header');
+  const toggle = document.querySelector<HTMLButtonElement>('#nav-toggle');
+  const nav = document.querySelector<HTMLElement>('#site-nav');
+
+  function openMenu() {
+    nav?.setAttribute('data-open', 'true');
+    toggle?.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu(restoreFocus = false) {
+    nav?.setAttribute('data-open', 'false');
+    toggle?.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    if (restoreFocus) toggle?.focus();
+  }
+
+  toggle?.addEventListener('click', () => {
+    if (nav?.getAttribute('data-open') === 'true') closeMenu();
+    else openMenu();
+  });
+
+  nav?.querySelectorAll('a').forEach((link) =>
+    link.addEventListener('click', () => closeMenu())
+  );
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && nav?.getAttribute('data-open') === 'true') {
+      closeMenu(true);
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!header?.contains(event.target as Node) && nav?.getAttribute('data-open') === 'true') {
+      closeMenu();
+    }
+  });
+
+  // TDD 10.4：导航高亮，href 为 /#xxx 形式
+  const sections = document.querySelectorAll<HTMLElement>('main section[id]');
+  const links = document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]');
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        links.forEach((link) => {
+          const active = link.getAttribute('href')?.endsWith(`#${entry.target.id}`) ?? false;
+          link.classList.toggle('text-accent', active);
+          link.classList.toggle('text-muted', !active);
+          if (active) link.setAttribute('aria-current', 'true');
+          else link.removeAttribute('aria-current');
+        });
+      });
+    },
+    { rootMargin: '-40% 0px -55% 0px' }
+  );
+  sections.forEach((section) => observer.observe(section));
+</script>

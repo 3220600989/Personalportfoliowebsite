@@ -1,0 +1,19 @@
+---
+interface Props {
+  brand: string;
+}
+
+const { brand } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-border py-6">
+  <div
+    class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 text-sm text-muted sm:px-6 lg:px-8"
+  >
+    <p>© {year} {brand}. 保留所有权利.</p>
+    <a href="/#home" class="inline-flex min-h-[44px] items-center hover:text-accent">
+      返回顶部 ↑
+    </a>
+  </div>
+</footer>

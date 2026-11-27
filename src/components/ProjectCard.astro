@@ -1,0 +1,83 @@
+---
+import { Image } from 'astro:assets';
+import type { Project } from '../types';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const hasLink = Boolean(project.liveUrl || project.repoUrl);
+---
+
+<article
+  data-reveal
+  class="group flex flex-col overflow-hidden rounded-card border border-border bg-card transition duration-300 hover:-translate-y-1 hover:border-accent"
+>
+  <div class="aspect-video overflow-hidden bg-bg">
+    <Image
+      src={project.image}
+      alt={project.imageAlt ?? project.name}
+      widths={[400, 800, 1200]}
+      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+      loading="lazy"
+      decoding="async"
+      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+    />
+  </div>
+
+  <div class="flex flex-1 flex-col p-5">
+    <div class="mb-2 flex items-start justify-between gap-3">
+      <h3 class="text-lg font-semibold">{project.name}</h3>
+      {project.period && <span class="shrink-0 text-xs text-muted">{project.period}</span>}
+    </div>
+
+    <p class="text-sm leading-relaxed text-muted">{project.description}</p>
+
+    {
+      project.highlights && project.highlights.length > 0 && (
+        <ul class="mt-3 space-y-1 text-xs text-accent">
+          {project.highlights.map((highlight) => (
+            <li>· {highlight}</li>
+          ))}
+        </ul>
+      )
+    }
+
+    <div class="mt-4 flex flex-wrap gap-2">
+      {
+        project.techStack.map((tech) => (
+          <span class="chip">{tech}</span>
+        ))
+      }
+    </div>
+
+    <div class="mt-auto flex flex-wrap gap-4 pt-5 text-sm">
+      {
+        project.liveUrl && (
+          <a
+            href={project.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-accent hover:underline"
+          >
+            在线预览 ↗
+          </a>
+        )
+      }
+      {
+        project.repoUrl && (
+          <a
+            href={project.repoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-accent hover:underline"
+          >
+            源码 ↗
+          </a>
+        )
+      }
+      {!hasLink && <span class="text-muted">暂无公开链接</span>}
+    </div>
+  </div>
+</article>

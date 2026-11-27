@@ -1,0 +1,63 @@
+---
+import Section from './Section.astro';
+import SocialLinks from './SocialLinks.astro';
+import type { SocialLink } from '../types';
+
+interface Props {
+  email: string;
+  socials: SocialLink[];
+}
+
+const { email, socials } = Astro.props;
+---
+
+<Section id="contact" title="联系我" subtitle="有合作想法或想聊聊？欢迎通过下面的方式找到我。">
+  <div data-reveal class="mx-auto max-w-3xl text-center">
+    <div class="flex flex-wrap items-center justify-center gap-3">
+      <a
+        href={`mailto:${email}`}
+        data-umami-event="email-link"
+        class="btn btn-primary"
+      >
+        {email}
+      </a>
+      <button
+        id="copy-email"
+        type="button"
+        data-email={email}
+        data-umami-event="copy-email"
+        class="btn btn-outline"
+      >
+        复制邮箱
+      </button>
+    </div>
+
+    <SocialLinks links={socials} className="mt-8 justify-center" />
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</Section>
+
+<script>
+  const copyButton = document.querySelector<HTMLButtonElement>('#copy-email');
+  const toast = document.querySelector<HTMLElement>('#toast');
+  let toastTimer: number | undefined;
+
+  function showToast(message: string) {
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add('show');
+    window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  copyButton?.addEventListener('click', async () => {
+    const email = copyButton.dataset.email ?? '';
+    try {
+      await navigator.clipboard.writeText(email);
+      showToast('邮箱已复制');
+    } catch {
+      showToast('复制失败，请手动复制');
+    }
+  });
+</script>
