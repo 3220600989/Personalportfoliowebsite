@@ -2,9 +2,9 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
-// Cloudflare Pages 免费域名为 <项目名>.pages.dev（可能带随机后缀）。
-// 部署后在 Cloudflare 项目里设置 PUBLIC_SITE_URL=https://实际域名，canonical / OG / sitemap 会自动跟随。
-const site = process.env.PUBLIC_SITE_URL ?? 'https://luotaotao-portfolio.pages.dev';
+// Cloudflare Pages 实际分配的免费域名（含随机后缀），canonical / OG / sitemap 依赖它。
+// 若以后更换域名，可在项目环境变量里设置 PUBLIC_SITE_URL 覆盖。
+const site = process.env.PUBLIC_SITE_URL ?? 'https://personalportfoliowebsite-izg.pages.dev';
 
 export default defineConfig({
   site,

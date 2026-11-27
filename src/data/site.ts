@@ -1,6 +1,6 @@
 import type { SiteConfig } from '../types';
 
-const defaultSiteUrl = 'https://luotaotao-portfolio.pages.dev';
+const defaultSiteUrl = 'https://personalportfoliowebsite-izg.pages.dev';
 
 /**
  * 站点级配置：标题、域名、导航、社交链接与统计脚本集中在此维护。
