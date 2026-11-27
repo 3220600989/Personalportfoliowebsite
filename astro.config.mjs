@@ -8,6 +8,9 @@ const site = process.env.PUBLIC_SITE_URL ?? 'https://personalportfoliowebsite-iz
 
 export default defineConfig({
   site,
+  // 花生壳 file-hosting 不提供目录索引：/projects/xxx/ 会返回空文件。
+  // 输出 .html 文件形式，让详情页与 sitemap 里的链接都能直接打开。
+  build: { format: 'file' },
   integrations: [sitemap()],
   vite: {
     plugins: [tailwindcss()],

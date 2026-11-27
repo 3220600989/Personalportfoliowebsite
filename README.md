@@ -20,7 +20,7 @@ npm run preview    # 预览构建产物
 |---|---|
 | 部署 | 花生壳 file-hosting（免费、国内节点、微信可直开），线上地址 https://l20v6c.kicp.fun |
 | 统计 | 不接入第三方统计 |
-| 项目数据 | 暂无公开项目，首页显示“项目整理中”；`/projects/[slug]` 详情页路由保留 |
+| 项目数据 | 已接入「心流 Flow」专注计时器，首页卡片自动生成，详情页为 `/projects/flow-focus-timer.html` |
 | 筛选标签 | 按你的决定暂不实现 |
 | 社交链接 | 暂无真实地址，`site.ts` 中留空以避免死链 |
 
@@ -36,7 +36,7 @@ npm run preview    # 预览构建产物
 ├── src/
 │   ├── assets/             # 需构建优化的图片（Astro <Image>）
 │   │   ├── avatar.webp     # 当前为“骆”字占位图
-│   │   └── projects/*.webp # 预留模板截图，暂无项目引用
+│   │   └── projects/*.webp # 项目封面（含 flow-focus.webp）
 │   ├── components/         # 只接收 props，不直接读 data/
 │   │   ├── Header / Footer / Section / Reveal
 │   │   ├── Hero / About / SkillGroup
@@ -59,10 +59,10 @@ npm run preview    # 预览构建产物
 
 1. **个人信息与技能**：`src/data/profile.ts` —— 姓名、头衔、简介、bio 段落、邮箱、技能分组。
 2. **站点与社交链接**：`src/data/site.ts` —— 标题、描述、导航、社交地址。拿到 GitHub / 掘金等真实主页后，按 `SocialLink` 类型往 `socials` 数组里补，避免死链。
-3. **项目作品**：`src/data/projects.ts` —— 当前为空数组。新增 AI 编程项目时：
+3. **项目作品**：`src/data/projects.ts` —— 目前已有「心流 Flow」。新增项目时：
    - 把 16:9 截图（WebP 优先）放到 `src/assets/projects/`；
    - 在该文件 import 图片并按 `Project` 类型添加一条数据；
-   - 首页卡片和 `/projects/[slug]` 详情页会在构建时自动生成，无需改组件。
+   - 首页卡片和 `/projects/[slug].html` 详情页会在构建时自动生成，无需改组件。
 4. **图片素材**：替换 `src/assets/avatar.webp`、`public/og-image.png`；项目截图按上面的方式走 Astro `<Image>` 优化。
 5. **设计 token**：`src/styles/global.css` 的 `@theme` —— 颜色/圆角/字体先加 token，再在组件里用对应 Tailwind 类，禁止写死十六进制。
 
@@ -88,7 +88,9 @@ npm run preview    # 预览构建产物
 
 4. 验证：访问 https://l20v6c.kicp.fun，确认标题、姓名、邮箱正常，`/favicon.svg`、`/robots.txt`、`/sitemap-index.xml` 均返回 200。
 
-> 关于域名一致性：花生壳地址与源码里配置的 `*.pages.dev` 默认域名不同。当前线上页面的 canonical / OG / sitemap 仍写 `personalportfoliowebsite-izg.pages.dev`。若要统一为花生壳地址，构建前设置环境变量 `PUBLIC_SITE_URL=https://l20v6c.kicp.fun`，并同步修改 `public/robots.txt` 的 `Sitemap:` 地址（静态文件读不到环境变量），然后按上面第 3 步更新发布。
+> 域名一致性：已统一到花生壳地址。构建前设置 `PUBLIC_SITE_URL=https://l20v6c.kicp.fun`；`public/robots.txt` 的 `Sitemap:` 也已手改为该域名（静态文件读不到环境变量）。
+
+> **花生壳 file-hosting 的两个坑**：① 更新接口只接受单个 `.zip`，不接受目录——先把发布目录压缩，再执行 `hsk-cli file-hosting update <zip> --resource-id 1795760040810580889 --yes`；② 它不提供目录索引，`/projects/xxx/` 会返回空文件，所以 `astro.config.mjs` 设了 `build.format: 'file'`，详情页输出为 `.html`。但 `@astrojs/sitemap` 会去掉 `.html` 后缀，发布前需把 `dist/sitemap-0.xml` 里的详情页地址补回 `.html`，否则搜索引擎抓到的是空页面。
 
 ## 上线前检查
 
