@@ -18,8 +18,8 @@ npm run preview    # 预览构建产物
 
 | 项目 | 状态 |
 |---|---|
-| 部署 | Cloudflare Pages，使用免费 `*.pages.dev` 域名 |
-| 统计 | Umami Cloud（Hobby 免费档）；填入 Website ID 后才加载脚本 |
+| 部署 | 花生壳 file-hosting（免费、国内节点、微信可直开），线上地址 https://l20v6c.kicp.fun |
+| 统计 | 不接入第三方统计 |
 | 项目数据 | 暂无公开项目，首页显示“项目整理中”；`/projects/[slug]` 详情页路由保留 |
 | 筛选标签 | 按你的决定暂不实现 |
 | 社交链接 | 暂无真实地址，`site.ts` 中留空以避免死链 |
@@ -40,8 +40,7 @@ npm run preview    # 预览构建产物
 │   ├── components/         # 只接收 props，不直接读 data/
 │   │   ├── Header / Footer / Section / Reveal
 │   │   ├── Hero / About / SkillGroup
-│   │   ├── Projects / ProjectCard / Contact / SocialLinks
-│   │   └── Analytics       # Umami 脚本（websiteId 为空时不渲染）
+│   │   └── Projects / ProjectCard / Contact / SocialLinks
 │   ├── data/               # site.ts / profile.ts / projects.ts
 │   ├── layouts/BaseLayout.astro
 │   ├── pages/
@@ -49,7 +48,7 @@ npm run preview    # 预览构建产物
 │   │   ├── 404.astro            # noindex
 │   │   └── projects/[slug].astro # 项目详情页（SSG，随项目数据自动生成）
 │   ├── styles/global.css   # Tailwind 引入 + @theme 设计 token
-│   └── types/index.ts      # Profile / Project / SiteConfig / AnalyticsConfig 等
+│   └── types/index.ts      # Profile / Project / SiteConfig 等类型
 ├── .env.example
 ├── astro.config.mjs
 ├── tsconfig.json
@@ -59,7 +58,7 @@ npm run preview    # 预览构建产物
 ## 修改内容
 
 1. **个人信息与技能**：`src/data/profile.ts` —— 姓名、头衔、简介、bio 段落、邮箱、技能分组。
-2. **站点与社交链接**：`src/data/site.ts` —— 标题、描述、导航、社交地址、Umami 配置。拿到 GitHub / 掘金等真实主页后，按 `SocialLink` 类型往 `socials` 数组里补，避免死链。
+2. **站点与社交链接**：`src/data/site.ts` —— 标题、描述、导航、社交地址。拿到 GitHub / 掘金等真实主页后，按 `SocialLink` 类型往 `socials` 数组里补，避免死链。
 3. **项目作品**：`src/data/projects.ts` —— 当前为空数组。新增 AI 编程项目时：
    - 把 16:9 截图（WebP 优先）放到 `src/assets/projects/`；
    - 在该文件 import 图片并按 `Project` 类型添加一条数据；
@@ -67,28 +66,29 @@ npm run preview    # 预览构建产物
 4. **图片素材**：替换 `src/assets/avatar.webp`、`public/og-image.png`；项目截图按上面的方式走 Astro `<Image>` 优化。
 5. **设计 token**：`src/styles/global.css` 的 `@theme` —— 颜色/圆角/字体先加 token，再在组件里用对应 Tailwind 类，禁止写死十六进制。
 
-## 部署到 Cloudflare Pages
+## 部署到线上（花生壳 file-hosting）
 
-1. 仓库已推送到 GitHub，无需重复初始化。
+当前线上地址：**https://l20v6c.kicp.fun**（国产、免费、国内节点、微信可直开）。此前用过 Cloudflare Pages 与 Vercel，均已弃用；GitHub 仓库仍作为源码备份保留。
 
-2. Cloudflare Dashboard → **Workers & Pages** → **Create** → **Pages** → **Connect to Git** → 选择 GitHub 并授权 → 选中仓库 `Personalportfoliowebsite`。
+发布走花生壳 CLI（`@aweray/hsk-cli`，已全局安装），托管的是**构建好的静态文件**，与 GitHub 仓库无自动联动——源码更新后需要手动重新构建并覆盖发布。
 
-3. 构建配置：Framework preset 选 **Astro**，Build command `npm run build`，Build output directory `dist`。环境变量先留空，点 **Save and Deploy**。
+1. 构建干净产物。项目内 `dist/` 可能残留旧文件，建议在临时目录全新构建后，把产物复制到 `.workbuddy/publish/`（首次发布的目录）。该目录只放静态文件：`index.html`、`404.html`、`favicon.svg`、`og-image.png`、`robots.txt`、`sitemap-index.xml`、`sitemap-0.xml`、`_astro/`。
 
-4. Cloudflare 会免费分配一个 `<项目名>.pages.dev` 域名，实际地址**可能带随机后缀**，请在项目 **Deployments** 页复制生产域名。然后：
-   - 项目 **Settings → Environment variables** 添加 `PUBLIC_SITE_URL=https://实际域名`（Production 必填），用于生成正确的 canonical / OG / sitemap；
-   - 同步把 `public/robots.txt` 里的 `Sitemap:` 地址改成同一个域名（它是静态文件，读不到环境变量）；
-   - 提交推送后 Cloudflare 会自动重新构建。
+2. 首次发布（在 WorkBuddy 对话中执行，需带 `--context` 上下文参数）：
+   ```bash
+   hsk-cli file-hosting .workbuddy/publish --entry-file index.html --format json --context <上下文>
+   ```
+   发布成功会返回一个 resourceId 和 publicUrl，并自动认领；信息记录在本地 `.hsk/resources.json`（已加入 `.gitignore`，不入库）。
 
-5. 重新部署后验证：`/sitemap-index.xml`、页面 canonical、OG 分享预览、`/404` 页面都指向新域名。
+3. 后续更新内容——**地址保持不变**：
+   ```bash
+   hsk-cli file-hosting-update -resource-id 1795760040810580889 .workbuddy/publish
+   ```
+   重新构建并把新产物替换进 `.workbuddy/publish/` 后再执行，线上即刻生效。
 
-## 接入 Umami 统计
+4. 验证：访问 https://l20v6c.kicp.fun，确认标题、姓名、邮箱正常，`/favicon.svg`、`/robots.txt`、`/sitemap-index.xml` 均返回 200。
 
-1. 注册 [Umami Cloud](https://cloud.umami.is/)，Hobby 档免费（每月 10 万事件、1 个网站、6 个月数据保留）。
-2. 添加网站，域名填 Cloudflare 实际分配的 `*.pages.dev` 地址；进入网站设置复制 **Website ID**。
-3. 在 Cloudflare 项目 **Settings → Environment variables** 添加 `PUBLIC_UMAMI_WEBSITE_ID=<Website ID>`（本地则写入 `.env.local`），重新部署。
-4. `websiteId` 为空时统计脚本完全不输出；填入后以 `defer` 方式加载，不阻塞首屏。
-5. 已埋的事件：`copy-email`、`email-link`、`social-*`、`projects-contact`；站点使用哈希锚点，脚本已设置 `data-exclude-hash`，不会把 `#about` 等计入路径。
+> 关于域名一致性：花生壳地址与源码里配置的 `*.pages.dev` 默认域名不同。当前线上页面的 canonical / OG / sitemap 仍写 `personalportfoliowebsite-izg.pages.dev`。若要统一为花生壳地址，构建前设置环境变量 `PUBLIC_SITE_URL=https://l20v6c.kicp.fun`，并同步修改 `public/robots.txt` 的 `Sitemap:` 地址（静态文件读不到环境变量），然后按上面第 3 步更新发布。
 
 ## 上线前检查
 
@@ -97,4 +97,4 @@ npm run preview    # 预览构建产物
 - [ ] 禁用 JS 内容仍完整可见；开启“减少动态效果”后无位移动画。
 - [ ] 键盘可完成导航、CTA、邮箱复制与联系方式访问。
 - [ ] 所有图片有 alt；外链无 404 且带 `rel="noopener noreferrer"`。
-- [ ] `PUBLIC_SITE_URL` 与 `robots.txt` 域名一致；Lighthouse 三项 ≥ 90。
+- [ ] `PUBLIC_SITE_URL` 与 `robots.txt` 域名一致（若统一到花生壳地址，两处都用 `https://l20v6c.kicp.fun`）；Lighthouse 三项 ≥ 90。

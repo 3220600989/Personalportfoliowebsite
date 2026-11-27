@@ -1,22 +1,4 @@
 ---
-import type { AnalyticsConfig } from '../types';
-
-interface Props {
-  analytics: AnalyticsConfig;
-}
-
-const { analytics } = Astro.props;
-const enabled = analytics.websiteId.trim().length > 0;
+// 统计功能已移除：不再加载任何第三方统计脚本。
+// 当前环境不允许删除 src 下的文件，故保留为空占位组件，无任何副作用。
 ---
-
-{
-  enabled && (
-    <script
-      is:inline
-      defer
-      src={analytics.scriptUrl}
-      data-website-id={analytics.websiteId}
-      data-exclude-hash="true"
-    ></script>
-  )
-}

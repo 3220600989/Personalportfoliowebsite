@@ -1,7 +1,5 @@
 ---
 import '../styles/global.css';
-import Analytics from '../components/Analytics.astro';
-import type { AnalyticsConfig } from '../types';
 
 interface Props {
   title: string;
@@ -9,7 +7,6 @@ interface Props {
   ogImage?: string;
   canonical?: string;
   noindex?: boolean;
-  analytics?: AnalyticsConfig;
 }
 
 const {
@@ -18,7 +15,6 @@ const {
   ogImage = '/og-image.png',
   canonical,
   noindex = false,
-  analytics,
 } = Astro.props;
 
 const site = Astro.site ?? new URL('https://example.com');
@@ -49,8 +45,6 @@ const ogImageURL = new URL(ogImage, site).href;
     <meta name="twitter:image" content={ogImageURL} />
 
     <slot name="head" />
-
-    {analytics && <Analytics analytics={analytics} />}
 
     {/* 渐进增强：仅当 JS 可用时标记为 js，内容默认可见 */}
     <script is:inline>

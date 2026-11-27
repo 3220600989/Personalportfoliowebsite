@@ -504,12 +504,11 @@ document.querySelectorAll('[data-reveal]').forEach((el) => observer.observe(el))
 
 ---
 
-## 15. 分析与埋点（可选 P2）
+## 15. 分析与埋点（不接入）
 
-- 选择 Plausible / Umami 等轻量、无 Cookie 方案，避免 GA4 体积和隐私合规负担。
-- 事件：项目卡片点击、GitHub 点击、邮箱复制、社交链接点击。
-- 使用 `data-event` 属性 + 统计脚本自定义事件，不引入重型 SDK。
-- 未接入统计时，代码不预留冗余逻辑。
+- 决策：不接入任何第三方统计（Plausible / Umami / GA4 均不采用）。
+- 站点不加载统计脚本、不设置埋点属性，避免隐私合规负担与脚本开销。
+- 代码中不预留统计相关配置、组件或事件属性。
 
 ---
 

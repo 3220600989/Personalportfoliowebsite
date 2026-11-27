@@ -44,11 +44,6 @@ export interface NavItem {
   href: string;
 }
 
-export interface AnalyticsConfig {
-  scriptUrl: string;
-  websiteId: string;
-}
-
 export interface SiteConfig {
   title: string;
   description: string;
@@ -56,5 +51,4 @@ export interface SiteConfig {
   ogImage: string;
   navItems: NavItem[];
   socials: SocialLink[];
-  analytics: AnalyticsConfig;
 }

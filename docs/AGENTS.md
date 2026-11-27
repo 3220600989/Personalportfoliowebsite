@@ -225,7 +225,7 @@ public/              # 不参与构建处理的静态文件（favicon、robots�
 - 所有图片提供宽高或 `aspect-ratio`，避免 CLS。
 - 使用 Astro `<Image>` 输出 WebP/AVIF 和响应式尺寸。
 - 不引入框架运行时和大型库。
-- 第三方统计使用轻量方案（Plausible / Umami），脚本 `defer`，不阻塞首屏。
+- 不接入第三方统计，不加载统计脚本，不设置埋点属性。
 
 ---
 

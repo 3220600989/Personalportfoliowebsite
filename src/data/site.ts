@@ -3,9 +3,8 @@ import type { SiteConfig } from '../types';
 const defaultSiteUrl = 'https://personalportfoliowebsite-izg.pages.dev';
 
 /**
- * 站点级配置：标题、域名、导航、社交链接与统计脚本集中在此维护。
- * 上线时把 PUBLIC_SITE_URL 设为 Cloudflare 实际分配的 *.pages.dev 地址；
- * 把 Umami Cloud 的 Website ID 写入 PUBLIC_UMAMI_WEBSITE_ID 即可启用统计。
+ * 站点级配置：标题、域名、导航与社交链接集中在此维护。
+ * 上线时把 PUBLIC_SITE_URL 设为实际线上域名即可。
  */
 export const site: SiteConfig = {
   title: '骆涛涛 · C++ / Qt 开发工程师 | 个人作品集',
@@ -21,8 +20,4 @@ export const site: SiteConfig = {
   ],
   // 暂无公开社交主页时留空；在拿到真实 GitHub / 掘金等地址后按 SocialLink 类型补充，避免死链。
   socials: [],
-  analytics: {
-    scriptUrl: 'https://cloud.umami.is/script.js',
-    websiteId: String(import.meta.env.PUBLIC_UMAMI_WEBSITE_ID ?? ''),
-  },
 };

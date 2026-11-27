@@ -208,8 +208,8 @@
 - 不支持 IE。
 
 ### 8.5 分析与部署
-- 可选接入 Plausible / Umami / GA4。
-- 部署到 Vercel / Netlify / Cloudflare Pages。
+- 不接入第三方统计（决策：无需访问数据，避免隐私与脚本开销）。
+- 部署到 Vercel / Netlify / Cloudflare Pages 或静态文件托管。
 - 配置自定义域名和 HTTPS。
 
 ---
